@@ -2,7 +2,7 @@ Write-Host -ForegroundColor Blue "###################################"
 Write-Host -ForegroundColor Blue "# >>>> start set-language-german   "
 Write-Host -ForegroundColor Blue "###################################"
 
-$LANGUAGEFILE = ".\Microsoft-Windows-Server-Language-Pack_x64_de-de.cab"
+$LANGUAGEFILE = "C:\vagrant\provision\Language\Microsoft-Windows-Server-Language-Pack_x64_de-de.cab"
 $LANGUAGE = "de-ch"
 $LOCAL = "de-ch"
 
