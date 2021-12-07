@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
         config.vm.network "private_network", ip: $domain_ip_address, libvirt__forward_mode: "route", libvirt__dhcp_enabled: false
         config.vm.network "forwarded_port", guest: 3389, host: 3389,
             auto_correct: true
-        config.vm.provision "shell", path: "provision/Langugage/set-language-german.ps1"   
+        config.vm.provision "shell", path: "provision/Language/set-language-german.ps1"   
         config.vm.provision "shell", path: "provision/ps.ps1", args: ["domain-controller.ps1", $domain]
         config.vm.provision "shell", reboot: true
         config.vm.provision "shell", path: "provision/ps.ps1", args: "domain-controller-configure.ps1"
@@ -64,7 +64,7 @@ Vagrant.configure("2") do |config|
             auto_correct: true
         #config.vm.provision "windows-sysprep"
         config.vm.provision "shell", path: "provision/ps.ps1", args: "provision-base.ps1"
-        config.vm.provision "shell", path: "provision/Langugage/set-language-german.ps1"
+        config.vm.provision "shell", path: "provision/Language/set-language-german.ps1"
         config.vm.provision "shell", path: "provision/add-to-domain.ps1", args: [$domain, $domain_ip_address]
         config.vm.provision "shell", reboot: true
         config.vm.provision "shell", inline: "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", name: "Install Chocolatey"
