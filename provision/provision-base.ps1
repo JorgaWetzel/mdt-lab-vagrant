@@ -16,7 +16,7 @@
 
 # set the timezone.
 # tzutil /l lists all available timezone ids
-& $env:windir\system32\tzutil /s "Central Standard Time"
+& $env:windir\system32\tzutil /s "europe standard time"
 
 # show window content while dragging.
 Set-ItemProperty -Path 'HKCU:Control Panel\Desktop' -Name DragFullWindows -Value 1
