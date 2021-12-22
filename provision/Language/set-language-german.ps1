@@ -9,6 +9,8 @@ $LOCAL = "de-ch"
 # check language file
 if (Test-Path "$LANGUAGEFILE") {
 
+  DISM /Online /Add-Package /PackagePath:$LANGUAGEFILE 
+
   # set primary language
   Write-Host -ForegroundColor Blue "###################################"
   Write-Host -ForegroundColor Blue "# >>>> set primary language        "
