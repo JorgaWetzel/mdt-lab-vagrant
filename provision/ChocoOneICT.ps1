@@ -18,7 +18,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 Add-Content $ENV:WinDir\System32\Drivers\etc\hosts "## oneICT chocolatey repo"
 Add-Content $ENV:WinDir\System32\Drivers\etc\hosts "195.49.62.108 chocoserver"
 # add selfsign certificate
-CertUtil -AddStore TrustedPeople $toolsDir\choclatey.cer
+CertUtil -AddStore TrustedPeople C:\vagrant\provision\choclatey.cer
 #$downloader = New-Object -TypeName System.Net.WebClient
 #Invoke-Expression ($downloader.DownloadString('http://chocoserver:80/Import-ChocoServerCertificate.ps1'))
 # add oneICT repositroy to chocolaty framework
