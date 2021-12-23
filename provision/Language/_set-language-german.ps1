@@ -11,9 +11,6 @@ if (Test-Path "$LANGUAGEFILE") {
 
   DISM /Online /Add-Package /PackagePath:$LANGUAGEFILE 
 
-  lpksetup.exe /i de-DE /p $LANGUAGEFILE /r /s
-  Wait-Process -Name lpksetup
-
   # set primary language
   Write-Host -ForegroundColor Blue "###################################"
   Write-Host -ForegroundColor Blue "# >>>> set primary language        "
