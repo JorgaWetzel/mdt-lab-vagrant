@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
         config.vm.network "forwarded_port", guest: 3389, host: 3389,
             auto_correct: true
         config.vm.provision "shell", path: "provision/Language/set-language-german.ps1"   
-        config.vm.provision "shell", path: "provision/ps.ps1", args: ["domain-controller.ps1", $domain]
+        config.vm.provision "shell", path: "provision/ps.ps1",  args: ["domain-controller.ps1", $domain]
         config.vm.provision "shell", reboot: true
         config.vm.provision "shell", path: "provision/ps.ps1", args: "domain-controller-configure.ps1"
         config.vm.provision "shell", inline: "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", name: "Install Chocolatey"
@@ -41,7 +41,7 @@ Vagrant.configure("2") do |config|
         config.vm.provision "shell", path: "provision/ps.ps1", args: "summary.ps1"
     end
 
-    config.vm.define "mdt" do |config|
+    config.vm.define "mdt" do |config|  
         config.vm.provider :libvirt do |lv, config|
             lv.memory = 4096
             # replace the default synced_folder with something that works in the base box.
@@ -51,11 +51,13 @@ Vagrant.configure("2") do |config|
         config.vm.provider :virtualbox do |v, override|
             v.memory = 4096
             v.cpus = 4
-            v.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
+            v.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]	
+			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "C:\\\E2B\\_ISO\\WINDOWS\\SVR2019\\Windows Server 2019 1909 DE.ISO"]
+			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "2", "--device", "0", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN11\\Windows11AIO.ISO"]
+			
         end
         config.vm.box = "windows-2019-amd64"
         config.vm.hostname = "mdt01"
-
         config.winrm.transport = :plaintext
         config.winrm.basic_auth_only = true
 
@@ -69,6 +71,7 @@ Vagrant.configure("2") do |config|
         config.vm.provision "shell", reboot: true
         config.vm.provision "shell", inline: "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))", name: "Install Chocolatey"
         config.vm.provision "shell", path: "provision/copy-mount.ps1"
+        config.vm.provision "shell", path: "provision/ChocoOneICT.ps1"
         config.vm.provision "shell", path: "provision/install-afce.ps1"
         config.vm.provision "shell", inline: "C:\\Source\\Install.ps1"
         config.vm.provision "shell", path: "provision/install-hotfix.ps1"
