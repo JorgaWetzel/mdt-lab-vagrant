@@ -1,6 +1,16 @@
 $domain = "mylab.com"
 $domain_ip_address = "192.168.56.2"
 $mdt_ip_address = "192.168.56.3"
+$ESXIP = "192.168.5.97"
+$ESXUser = "root"
+$ESXPW = "P@ssw0rd"
+$ESXRAMMDT = "8192"
+$ESXCPUMDT = "2"
+$ESXNET = "VM Network"
+$ESXSTORE = "Storage"
+$BaseboxServer = "windows-2019-amd64"
+$BaseboxServerVersion = "11.10.2021"
+
 
 Vagrant.configure("2") do |config|
     
@@ -28,10 +38,10 @@ Vagrant.configure("2") do |config|
                             "--medium", "emptydrive"]
         end
 
-        config.vm.network "private_network", ip: $domain_ip_address, libvirt__forward_mode: "route", libvirt__dhcp_enabled: false
+		config.vm.network "private_network", ip: $domain_ip_address, libvirt__forward_mode: "route", libvirt__dhcp_enabled: false
         config.vm.network "forwarded_port", guest: 3389, host: 3389,
             auto_correct: true
-        config.vm.provision "shell", path: "provision/Language/set-language-german.ps1"   
+        #config.vm.provision "shell", path: "provision/Language/set-language-german.ps1"   
         config.vm.provision "shell", path: "provision/ps.ps1",  args: ["domain-controller.ps1", $domain]
         config.vm.provision "shell", reboot: true
         config.vm.provision "shell", path: "provision/ps.ps1", args: "domain-controller-configure.ps1"
@@ -49,20 +59,35 @@ Vagrant.configure("2") do |config|
             config.vm.synced_folder '.', '/vagrant', type: 'smb', smb_username: ENV['USER'], smb_password: ENV['VAGRANT_SMB_PASSWORD']
         end
         config.vm.provider :virtualbox do |v, override|
+			v.linked_clone = true
+			v.cpus = 4
             v.memory = 4096
-            v.cpus = 4
-            v.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]	
-			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "C:\\\E2B\\_ISO\\WINDOWS\\SVR2019\\Windows Server 2019 1909 DE.ISO"]
-			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "2", "--device", "0", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN11\\Windows11AIO.ISO"]
-			
+			v.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
+			#v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "C:\\\E2B\\_ISO\\WINDOWS\\SVR2019\\Windows Server 2019 1909 DE.ISO"]
+			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN10\\Windows10AIO.ISO"]	
+			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "2", "--device", "0", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN11\\Windows11AIO.ISO"]	
         end
-        config.vm.box = "windows-2019-amd64"
+
+        #  Provider (esxi) settings
+        config.vm.provider :vmware_esxi do |v,esxi|
+            v.esxi_hostname = $ESXIP
+            v.esxi_username = $ESXUser
+            v.esxi_password = $ESXPW
+            v.esxi_virtual_network = ['$ESXNET']
+            v.guest_memsize = $ESXRAMMDT
+            v.guest_numvcpus = $ESXCPUMDT
+            v.guest_disk_type = 'thick' # 'thin', 'thick', or 'eagerzeroedthick'
+
+        end
+        
+        config.vm.box = $BaseboxServer
+        #config.vm.box_version = $BaseboxServerVersion
         config.vm.hostname = "mdt01"
         config.winrm.transport = :plaintext
         config.winrm.basic_auth_only = true
 
         config.vm.network "private_network", ip: $mdt_ip_address, libvirt__forward_mode: "route", libvirt__dhcp_enabled: false
-        config.vm.network "forwarded_port", guest: 3389, host: 3389,
+        config.vm.network "forwarded_port", guest: 3389, host: 3399,
             auto_correct: true
         #config.vm.provision "windows-sysprep"
         config.vm.provision "shell", path: "provision/ps.ps1", args: "provision-base.ps1"
@@ -80,4 +105,6 @@ Vagrant.configure("2") do |config|
         config.vm.provision "shell", reboot: true
         config.vm.provision "shell", path: "provision/ps.ps1", args: "summary.ps1"
     end
+
+              
 end

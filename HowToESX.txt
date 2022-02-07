@@ -1,0 +1,38 @@
+ESX Server:
+Create Volume
+Enable ESXi shell and Enable SSH 
+Enable "Guest IP Hack" via Putty :  esxcli system settings advanced set -o /Net/GuestIPHack -i 1
+Virtueller Switch vSwitch1 erstellen und dann Portgruppe "Vassalli Network" erstellt und auf vSwtich1 legen
+
+Management Host:
+
+# Disable password complexity policy
+secedit /export /cfg C:\secpol.cfg
+(gc C:\secpol.cfg).replace("PasswordComplexity = 1", "PasswordComplexity = 0") | Out-File C:\secpol.cfg
+  secedit /configure /db C:\Windows\security\local.sdb /cfg C:\secpol.cfg /areas SECURITYPOLICY
+  rm -force C:\secpol.cfg -confirm:$false
+
+
+net user /add vagrant vagrant
+net localgroup /add administrators vagrant
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+Choco upgrade vagrant -y
+geht nicht (choco install packer-post-processor-vagrant-vmware-ovf -y)
+VMware-ovftool-4.4.1-16812187-win.x86_64.msi -> 
+C:\Program Files\VMware\VMware OVF Tool\ copy to C:\HashiCorp\Vagrant\bin
+vagrant plugin install vagrant-vmware-esxi
+vagrant plugin install vagrant-winrm-syncedfolders
+vagrant plugin install vagrant-reload
+
+
+[Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
+wget -uri https://github.com/JorgaWetzel/mdt-lab-vagrant/archive/master.zip -OutFile C:\Windows\Temp\Master.zip
+Expand-Archive -Path C:\Windows\Temp\Master.zip -DestinationPath C:\service
+ren "C:\service\MDT\mdt-lab-vagrant-master" "C:\service\MDT"
+cd "C:\service\MDT"
+
+vagrant up "mdt" --provider vmware_esxi
+vagrant up "VAS-SRV19DB01" --provider vmware_esxi --provision-with "shell"
+vagrant up "VAS-SRV19RD01" --provider vmware_esxi
+
+

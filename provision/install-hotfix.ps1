@@ -1,3 +1,4 @@
+New-Item -Path 'c:\tmp' -ItemType Directory
 Invoke-WebRequest -Uri "https://download.microsoft.com/download/3/0/6/306AC1B2-59BE-43B8-8C65-E141EF287A5E/KB4564442/MDT_KB4564442.exe" -OutFile "C:\tmp\MDT_KB4564442.exe"
 C:\tmp\MDT_KB4564442.exe /extract:"c:\tmp" /quiet
 Start-Sleep -Seconds 5
