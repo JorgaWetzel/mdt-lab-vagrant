@@ -8,14 +8,14 @@ $ESXRAMMDT = "8192"
 $ESXCPUMDT = "2"
 $ESXNET = "VM Network"
 $ESXSTORE = "Storage"
-$BaseboxServer = "windows-2019-amd64"
+$BaseboxServer = "JorgaWetzel/windows_2019DE"
 $BaseboxServerVersion = "11.10.2021"
 
 
 Vagrant.configure("2") do |config|
     
     config.vm.define "dc" do |config|
-        config.vm.box = "windows-2019-amd64"
+        config.vm.box = "JorgaWetzel/windows_2019DE"
         config.vm.hostname = "dc"
 
         # use the plaintext WinRM transport and force it to use basic authentication.
@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
             v.memory = 4096
             v.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
             v.customize ["storageattach", :id,
-                            "--storagectl", "SATA Controller",
+                            "--storagectl", "IDE Controller",
                             "--device", "0",
                             "--port", "1",
                             "--type", "dvddrive",
@@ -39,8 +39,8 @@ Vagrant.configure("2") do |config|
         end
 
 		config.vm.network "private_network", ip: $domain_ip_address, libvirt__forward_mode: "route", libvirt__dhcp_enabled: false
-        config.vm.network "forwarded_port", guest: 3389, host: 3389,
-            auto_correct: true
+        #config.vm.network "forwarded_port", guest: 3389, host: 3389,
+        #   auto_correct: true
         #config.vm.provision "shell", path: "provision/Language/set-language-german.ps1"   
         config.vm.provision "shell", path: "provision/ps.ps1",  args: ["domain-controller.ps1", $domain]
         config.vm.provision "shell", reboot: true
@@ -64,8 +64,8 @@ Vagrant.configure("2") do |config|
             v.memory = 4096
 			v.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
 			#v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "C:\\\E2B\\_ISO\\WINDOWS\\SVR2019\\Windows Server 2019 1909 DE.ISO"]
-			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN10\\Windows10AIO.ISO"]	
-			v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", "2", "--device", "0", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN11\\Windows11AIO.ISO"]	
+			v.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN10\\Windows10AIO.ISO"]	
+			v.customize ["storageattach", :id, "--storagectl", "IDE Controller", "--port", "0", "--device", "1", "--type", "dvddrive", "--medium", "C:\\E2B\\_ISO\\WINDOWS\\WIN11\\Windows11AIO.ISO"]	
         end
 
         #  Provider (esxi) settings

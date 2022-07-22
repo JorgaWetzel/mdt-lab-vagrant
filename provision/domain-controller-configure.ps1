@@ -47,11 +47,11 @@ Clear-DnsClientCache
 # add the vagrant user to the Enterprise Admins group.
 # NB this is needed to install the Enterprise Root Certification Authority.
 Add-ADGroupMember `
-    -Identity 'Enterprise Admins' `
+    -Identity 'Domänen-Admins' `
     -Members "CN=vagrant,$usersAdPath"
 
 Add-ADGroupMember `
-    -Identity 'Domain Admins' `
+    -Identity 'Domänen-Admins' `
     -Members "CN=vagrant,$usersAdPath"
 
 
@@ -83,13 +83,13 @@ Get-ADPrincipalGroupMembership -Identity 'vagrant' `
 
 echo 'Enterprise Administrators'
 Get-ADGroupMember `
-    -Identity 'Enterprise Admins' `
+    -Identity 'Domänen-Admins' `
     | Select-Object Name,DistinguishedName,SID `
     | Format-Table -AutoSize | Out-String -Width 2000
 
-echo 'Domain Administrators'
+echo 'Domänen-Admins'
 Get-ADGroupMember `
-    -Identity 'Domain Admins' `
+    -Identity 'Domänen-Admins' `
     | Select-Object Name,DistinguishedName,SID `
     | Format-Table -AutoSize | Out-String -Width 2000
 
