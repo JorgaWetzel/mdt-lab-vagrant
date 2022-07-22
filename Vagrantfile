@@ -102,6 +102,7 @@ Vagrant.configure("2") do |config|
         config.vm.provision "shell", path: "provision/install-hotfix.ps1"
         config.vm.provision "shell", path: "provision/install-dhcp.ps1"
         config.vm.provision "shell", path: "provision/install-wds.ps1"
+		config.vm.provision "shell", inline: "Add-DhcpServerInDC"
         config.vm.provision "shell", reboot: true
         config.vm.provision "shell", path: "provision/ps.ps1", args: "summary.ps1"
     end

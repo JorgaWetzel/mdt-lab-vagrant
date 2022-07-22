@@ -6,3 +6,4 @@ ldaprc
 *.iso
 **/packer_cache/*
 **/output-*
+VMware-ovftool-4.4.1-16812187-win.x86_64.msi
